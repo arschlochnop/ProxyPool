@@ -11,8 +11,8 @@ services:
     ports:
       - "5555:5555"
     restart: always
-    # volumes:
-    #   - proxypool/crawlers/private:/app/proxypool/crawlers/private
+    volumes:
+      - proxypool/:/app/proxypool/
     environment:
       PROXYPOOL_REDIS_HOST: redis4proxypool
       
