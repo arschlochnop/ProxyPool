@@ -7,7 +7,6 @@ from proxypool.setting import TEST_TIMEOUT, TEST_BATCH, TEST_URL, TEST_VALID_STA
 from aiohttp import ClientProxyConnectionError, ServerDisconnectedError, ClientOSError, ClientHttpProxyError
 from asyncio import TimeoutError
 
-
 EXCEPTIONS = (
     ClientProxyConnectionError,
     ConnectionRefusedError,
@@ -23,14 +22,14 @@ class Tester(object):
     """
     tester for testing proxies in queue
     """
-    
+
     def __init__(self):
         """
         init redis
         """
         self.redis = RedisClient()
         self.loop = asyncio.get_event_loop()
-    
+
     async def test(self, proxy: Proxy):
         """
         test single proxy
@@ -43,14 +42,19 @@ class Tester(object):
                 # if TEST_ANONYMOUS is True, make sure that
                 # the proxy has the effect of hiding the real IP
                 if TEST_ANONYMOUS:
-                    url = 'https://httpbin.org/ip'
-                    async with session.get(url, timeout=TEST_TIMEOUT) as response:
-                        resp_json = await response.json()
-                        origin_ip = resp_json['origin']
+                    url = 'https://cdid.c-ctrip.com/model-poc2/h'
+                    # async with session.get(url, timeout=TEST_TIMEOUT) as response:
+                    #     # resp_json = await response.json()
+                    #     origin_ip = await response.text()
+                    #     # origin_ip = resp_json['origin']
+                    # async with session.get(url, proxy=f'http://{proxy.string()}', timeout=TEST_TIMEOUT) as response:
+                    #     resp_json = await response.json()
+                    #     anonymous_ip = resp_json['origin']
                     async with session.get(url, proxy=f'http://{proxy.string()}', timeout=TEST_TIMEOUT) as response:
-                        resp_json = await response.json()
-                        anonymous_ip = resp_json['origin']
-                    assert origin_ip != anonymous_ip
+                        # resp_json = await response.json()
+                        anonymous_ip = await response.text()
+                        # origin_ip = resp_json['origin']
+                    # assert origin_ip != anonymous_ip
                     assert proxy.host == anonymous_ip
                 async with session.get(TEST_URL, proxy=f'http://{proxy.string()}', timeout=TEST_TIMEOUT,
                                        allow_redirects=False) as response:
@@ -63,7 +67,7 @@ class Tester(object):
             except EXCEPTIONS:
                 self.redis.decrease(proxy)
                 logger.debug(f'proxy {proxy.string()} is invalid, decrease score')
-    
+
     @logger.catch
     def run(self):
         """
@@ -84,14 +88,15 @@ class Tester(object):
             if not cursor:
                 break
 
+
 def run_tester():
     host = '96.113.165.182'
     port = '3128'
     tasks = [tester.test(Proxy(host=host, port=port))]
     tester.loop.run_until_complete(asyncio.wait(tasks))
 
+
 if __name__ == '__main__':
     tester = Tester()
     tester.run()
     # run_tester()
-
