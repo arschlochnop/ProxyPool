@@ -62,9 +62,9 @@ PROXY_NUMBER_MAX = 50000
 PROXY_NUMBER_MIN = 0
 
 # 测试周期的定义，将每 CYCLE_TESTER 秒测试一次
-CYCLE_TESTER = env.int('CYCLE_TESTER', 200)
+CYCLE_TESTER = env.int('CYCLE_TESTER', 60*60)
 # 每隔 CYCLE_GETTER 秒就会获取代理
-CYCLE_GETTER = env.int('CYCLE_GETTER', 1000)
+CYCLE_GETTER = env.int('CYCLE_GETTER', 60*60*5)
 GET_TIMEOUT = env.int('GET_TIMEOUT', 10)
 
 # definition of tester

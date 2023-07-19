@@ -59,7 +59,7 @@ class Tester(object):
                         anonymous_ip = await response.text()
                         # origin_ip = resp_json['origin']
                     # assert origin_ip != anonymous_ip
-                    logger.debug(f'proxy {proxy.host}  当前IP: {anonymous_ip[:10]} ')
+                    logger.debug(f'proxy {proxy.host}  当前IP: {anonymous_ip[:20]} ')
                     if proxy.host != anonymous_ip:
                         self.redis.decrease(proxy, -5)
                         logger.debug(f'proxy {proxy.host} 高匿验证失败')
