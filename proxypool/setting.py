@@ -62,14 +62,14 @@ PROXY_NUMBER_MAX = 50000
 PROXY_NUMBER_MIN = 0
 
 # 测试周期的定义，将每 CYCLE_TESTER 秒测试一次
-CYCLE_TESTER = env.int('CYCLE_TESTER', 60*60)
+CYCLE_TESTER = env.int('CYCLE_TESTER', 60*5)
 # 每隔 CYCLE_GETTER 秒就会获取代理
 CYCLE_GETTER = env.int('CYCLE_GETTER', 60*60*5)
 GET_TIMEOUT = env.int('GET_TIMEOUT', 10)
 
 # definition of tester
 TEST_URL = env.str('TEST_URL', 'https://www.baidu.com')
-TEST_TIMEOUT = env.int('TEST_TIMEOUT', 10)
+TEST_TIMEOUT = env.int('TEST_TIMEOUT', 5)
 TEST_BATCH = env.int('TEST_BATCH', 50)
 # only save anonymous proxy
 TEST_ANONYMOUS = env.bool('TEST_ANONYMOUS', True)

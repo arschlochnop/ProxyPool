@@ -3,6 +3,7 @@ services:
   redis4proxypool:
     image: redis:alpine
     container_name: redis4proxypool
+    restart: always
     # ports:
     #   - "6374:6379"
   proxypool:
@@ -16,4 +17,6 @@ services:
     environment:
       PROXYPOOL_REDIS_HOST: redis4proxypool
       APP_ENV: dev
+    depends_on:
+      - redis4proxypool
 
