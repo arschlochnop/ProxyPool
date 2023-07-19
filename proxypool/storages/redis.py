@@ -70,20 +70,22 @@ class RedisClient(object):
         # else raise error
         raise PoolEmptyException
 
-    def decrease(self, proxy: Proxy) -> int:
+    def decrease(self, proxy: Proxy,increment = -1) -> int:
         """
-        decrease score of proxy, if small than PROXY_SCORE_MIN, delete it
+        降低代理的分数，如果小于PROXY_SCORE_MIN，则将其删除
+        增加可控性，可以自定义减少多少分
         :param proxy: proxy
+        :param increment: 分数减少多少
         :return: new score
         """
         if IS_REDIS_VERSION_2:
-            self.db.zincrby(REDIS_KEY, proxy.string(), -1)
+            self.db.zincrby(REDIS_KEY, proxy.string(), increment)
         else:
-            self.db.zincrby(REDIS_KEY, -1, proxy.string())
+            self.db.zincrby(REDIS_KEY, increment, proxy.string())
         score = self.db.zscore(REDIS_KEY, proxy.string())
-        logger.info(f'{proxy.string()} score decrease 1, current {score}')
+        logger.info(f'{proxy.string()} , 当前分数 {score}')
         if score <= PROXY_SCORE_MIN:
-            logger.info(f'{proxy.string()} current score {score}, remove')
+            logger.debug(f'{proxy.string()} 当前分数 {score} 过低, 删除')
             self.db.zrem(REDIS_KEY, proxy.string())
 
     def exists(self, proxy: Proxy) -> bool:
@@ -100,7 +102,7 @@ class RedisClient(object):
         :param proxy: proxy
         :return: new score
         """
-        logger.info(f'{proxy.string()} is valid, set to {PROXY_SCORE_MAX}')
+        logger.info(f'{proxy.string()} 验证成功, 分值设为 {PROXY_SCORE_MAX}')
         if IS_REDIS_VERSION_2:
             return self.db.zadd(REDIS_KEY, PROXY_SCORE_MAX, proxy.string())
         return self.db.zadd(REDIS_KEY, {proxy.string(): PROXY_SCORE_MAX})

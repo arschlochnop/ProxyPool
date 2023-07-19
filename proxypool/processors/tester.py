@@ -38,6 +38,7 @@ class Tester(object):
         """
         async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=False)) as session:
             try:
+                anonymous_ip = None
                 logger.debug(f'testing {proxy.string()}')
                 # if TEST_ANONYMOUS is True, make sure that
                 # the proxy has the effect of hiding the real IP
@@ -60,13 +61,13 @@ class Tester(object):
                                        allow_redirects=False) as response:
                     if response.status in TEST_VALID_STATUS:
                         self.redis.max(proxy)
-                        logger.debug(f'proxy {proxy.string()} is valid, set max score')
+                        logger.debug(f'proxy {proxy.string()} 验证成功,分值设为最高')
                     else:
                         self.redis.decrease(proxy)
-                        logger.debug(f'proxy {proxy.string()} is invalid, decrease score')
+                        logger.debug(f'proxy {proxy.string()} 访问目标网站失败,分数减一')
             except EXCEPTIONS:
-                self.redis.decrease(proxy)
-                logger.debug(f'proxy {proxy.string()} is invalid, decrease score')
+                self.redis.decrease(proxy,-5)
+                logger.debug(f'proxy {proxy.string()} != {anonymous_ip} 高匿验证失败,分数减一')
 
     @logger.catch
     def run(self):

@@ -15,4 +15,5 @@ services:
       - proxypool/:/app/proxypool/
     environment:
       PROXYPOOL_REDIS_HOST: redis4proxypool
-      
+      APP_ENV: prod
+
