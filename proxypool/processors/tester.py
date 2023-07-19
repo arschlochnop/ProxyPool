@@ -71,7 +71,7 @@ class Tester(object):
                         logger.debug(f'proxy {proxy.string()} 访问目标网站失败,分数减一')
             except EXCEPTIONS as e:
                 self.redis.decrease(proxy,-5)
-                logger.error(f'{proxy.string()}验证失败, {traceback.format_exc()}')
+                # logger.error(f'{proxy.string()}验证失败, {traceback.format_exc()}')
 
     @logger.catch
     def run(self):
