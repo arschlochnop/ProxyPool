@@ -83,10 +83,11 @@ class RedisClient(object):
         else:
             self.db.zincrby(REDIS_KEY, increment, proxy.string())
         score = self.db.zscore(REDIS_KEY, proxy.string())
-        logger.info(f'{proxy.string()} , 当前分数 {score}')
         if score <= PROXY_SCORE_MIN:
             logger.debug(f'{proxy.string()} 当前分数 {score} 过低, 删除')
             self.db.zrem(REDIS_KEY, proxy.string())
+        else:
+            logger.debug(f'{proxy.string()} 当前分数 {score}')
 
     def exists(self, proxy: Proxy) -> bool:
         """

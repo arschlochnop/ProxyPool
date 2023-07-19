@@ -1,4 +1,6 @@
 import asyncio
+import traceback
+
 import aiohttp
 from loguru import logger
 from proxypool.schemas import Proxy
@@ -56,7 +58,9 @@ class Tester(object):
                         anonymous_ip = await response.text()
                         # origin_ip = resp_json['origin']
                     # assert origin_ip != anonymous_ip
-                    assert proxy.host == anonymous_ip
+                    if proxy.host != anonymous_ip:
+                        self.redis.decrease(proxy, -5)
+                        logger.debug(f'proxy {proxy.string()} != {anonymous_ip} 高匿验证失败')
                 async with session.get(TEST_URL, proxy=f'http://{proxy.string()}', timeout=TEST_TIMEOUT,
                                        allow_redirects=False) as response:
                     if response.status in TEST_VALID_STATUS:
@@ -65,9 +69,9 @@ class Tester(object):
                     else:
                         self.redis.decrease(proxy)
                         logger.debug(f'proxy {proxy.string()} 访问目标网站失败,分数减一')
-            except EXCEPTIONS:
+            except EXCEPTIONS as e:
                 self.redis.decrease(proxy,-5)
-                logger.debug(f'proxy {proxy.string()} != {anonymous_ip} 高匿验证失败,分数减一')
+                logger.error(f'{proxy.string()}验证失败, {traceback.format_exc()}')
 
     @logger.catch
     def run(self):
