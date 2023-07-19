@@ -53,18 +53,18 @@ class Tester(object):
                     # async with session.get(url, proxy=f'http://{proxy.string()}', timeout=TEST_TIMEOUT) as response:
                     #     resp_json = await response.json()
                     #     anonymous_ip = resp_json['origin']
-                    async with session.get(url, proxy=f'http://{proxy.string()}', header=TEST_HEADERS,
+                    async with session.get(url, proxy=f'http://{proxy.string()}', headers=TEST_HEADERS,
                                            timeout=TEST_TIMEOUT) as response:
                         # resp_json = await response.json()
                         anonymous_ip = await response.text()
                         # origin_ip = resp_json['origin']
                     # assert origin_ip != anonymous_ip
-                    logger.debug(f'proxy {proxy.host}  当前IP: {anonymous_ip} ')
+                    logger.debug(f'proxy {proxy.host}  当前IP: {anonymous_ip[:10]} ')
                     if proxy.host != anonymous_ip:
                         self.redis.decrease(proxy, -5)
-                        logger.debug(f'proxy {proxy.host} != {anonymous_ip} 高匿验证失败')
+                        logger.debug(f'proxy {proxy.host} 高匿验证失败')
                         return
-                async with session.get(TEST_URL, proxy=f'http://{proxy.string()}', header=TEST_HEADERS,
+                async with session.get(TEST_URL, proxy=f'http://{proxy.string()}', headers=TEST_HEADERS,
                                        timeout=TEST_TIMEOUT,
                                        allow_redirects=False) as response:
                     if response.status in TEST_VALID_STATUS:

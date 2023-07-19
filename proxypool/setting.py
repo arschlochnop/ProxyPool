@@ -62,20 +62,20 @@ PROXY_NUMBER_MAX = 50000
 PROXY_NUMBER_MIN = 0
 
 # 测试周期的定义，将每 CYCLE_TESTER 秒测试一次
-CYCLE_TESTER = env.int('CYCLE_TESTER', 20)
+CYCLE_TESTER = env.int('CYCLE_TESTER', 200)
 # 每隔 CYCLE_GETTER 秒就会获取代理
-CYCLE_GETTER = env.int('CYCLE_GETTER', 100)
+CYCLE_GETTER = env.int('CYCLE_GETTER', 1000)
 GET_TIMEOUT = env.int('GET_TIMEOUT', 10)
 
 # definition of tester
 TEST_URL = env.str('TEST_URL', 'https://www.baidu.com')
 TEST_TIMEOUT = env.int('TEST_TIMEOUT', 10)
-TEST_BATCH = env.int('TEST_BATCH', 20)
+TEST_BATCH = env.int('TEST_BATCH', 50)
 # only save anonymous proxy
 TEST_ANONYMOUS = env.bool('TEST_ANONYMOUS', True)
-TEST_HEADERS = env.json('TEST_HEADERS', """{
+TEST_HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36',
-}""")
+}
 TEST_VALID_STATUS = env.list('TEST_VALID_STATUS', [200, 206, 302])
 
 # definition of api
