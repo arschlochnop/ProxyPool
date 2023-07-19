@@ -12,7 +12,7 @@ services:
       - "5555:5555"
     restart: always
     volumes:
-      - proxypool/:/app/proxypool/
+      - ./proxypool/:/app/proxypool/
     environment:
       PROXYPOOL_REDIS_HOST: redis4proxypool
       APP_ENV: prod
